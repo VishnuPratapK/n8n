@@ -1,23 +1,16 @@
-# Use the official n8n Docker image
 FROM n8nio/n8n:latest
 
-# Optional: Add any custom nodes or configuration files
-# COPY ./custom-nodes /home/node/.n8n/custom-nodes
+ENV NODE_ENV=production
+ENV N8N_PORT=8080
+ENV N8N_PROTOCOL=https
+ENV N8N_ENCRYPTION_KEY=54a29d256aefce660b73928fbecb07ef44ad19ce792459cf
+ENV PORT=8080
 
-# Set working directory
-WORKDIR /home/node
+CMD ["n8n", "start"]
+EOF
 
-# Make data directory (for storing workflows etc.)
-RUN mkdir -p /home/node/.n8n
+# Build the image
+docker build -t us-central1-docker.pkg.dev/$PROJECT_ID/n8n-repo/n8n:latest .
 
-# Set correct permissions
-RUN chown -R node:node /home/node
-
-# Switch to node user (recommended by n8n)
-USER node
-
-# Expose port (must match the PORT env variable on Railway)
-EXPOSE 3000
-
-# Start n8n
-CMD ["n8n"]
+# Push to Artifact Registry
+docker push us-central1-docker.pkg.dev/$PROJECT_ID/n8n-repo/n8n:latest
